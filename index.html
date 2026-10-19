@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Working Calculator</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #e8eef5;
+            font-family: Arial, sans-serif;
+        }
+
+        .calculator {
+            width: 320px;
+            padding: 20px;
+            background: #182431;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        #display {
+            width: 100%;
+            height: 75px;
+            margin-bottom: 15px;
+            padding: 15px;
+            border: none;
+            border-radius: 12px;
+            background: #0d151e;
+            color: white;
+            text-align: right;
+            font-size: 30px;
+        }
+
+        .buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+        }
+
+        button {
+            height: 55px;
+            border: none;
+            border-radius: 10px;
+            background: #344454;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        button:hover {
+            background: #526477;
+        }
+
+        .operator {
+            background: #ff7900;
+        }
+
+        .operator:hover {
+            background: #e66c00;
+        }
+
+        .clear {
+            background: #e74c3c;
+        }
+
+        .zero {
+            grid-column: span 2;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="calculator">
+
+        <input type="text" id="display"
+               placeholder="0" readonly>
+
+        <div class="buttons">
+
+            <button class="clear" onclick="clearDisplay()">C</button>
+            <button onclick="deleteLast()">DEL</button>
+            <button onclick="appendValue('%')">%</button>
+            <button class="operator" onclick="appendValue('/')">÷</button>
+
+            <button onclick="appendValue('7')">7</button>
+            <button onclick="appendValue('8')">8</button>
+            <button onclick="appendValue('9')">9</button>
+            <button class="operator" onclick="appendValue('*')">×</button>
+
+            <button onclick="appendValue('4')">4</button>
+            <button onclick="appendValue('5')">5</button>
+            <button onclick="appendValue('6')">6</button>
+            <button class="operator" onclick="appendValue('-')">−</button>
+
+            <button onclick="appendValue('1')">1</button>
+            <button onclick="appendValue('2')">2</button>
+            <button onclick="appendValue('3')">3</button>
+            <button class="operator" onclick="appendValue('+')">+</button>
+
+            <button class="zero" onclick="appendValue('0')">0</button>
+            <button onclick="appendValue('.')">.</button>
+            <button class="operator" onclick="calculate()">=</button>
+
+        </div>
+    </div>
+
+    <script>
+        const display = document.getElementById("display");
+
+        function appendValue(value) {
+            if (display.value === "Error") {
+                display.value = "";
+            }
+            display.value += value;
+        }
+
+        function clearDisplay() {
+            display.value = "";
+        }
+
+        function deleteLast() {
+            display.value = display.value.slice(0, -1);
+        }
+
+        function calculate() {
+            try {
+                const expression = display.value;
+
+                if (!expression ||
+                    !/^[0-9+\-*/%.()\s]+$/.test(expression)) {
+                    throw new Error("Invalid input");
+                }
+
+                const result = Function(
+                    '"use strict"; return (' + expression + ')'
+                )();
+
+                if (!Number.isFinite(result)) {
+                    throw new Error("Invalid result");
+                }
+
+                display.value =
+                    Number(result.toPrecision(12)).toString();
+
+            } catch (error) {
+                display.value = "Error";
+            }
+        }
+    </script>
+
+</body>
+</html>
